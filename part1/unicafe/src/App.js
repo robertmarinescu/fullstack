@@ -3,6 +3,7 @@ import React, {useState} from "react";
 const Title = ({title}) => <h1>{title}</h1> 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button> 
 const Rank = ({feedback, grade}) => <div>{feedback} {grade}</div>
+const Statistics = (props) => <div>{props.stats} {props.results}</div>
 
 const App = () => {
   
@@ -39,8 +40,8 @@ const App = () => {
       <Rank feedback="neutral" grade={neutral}></Rank>
       <Rank feedback="bad" grade={bad}></Rank>
 
-      <Rank feedback="average" grade={average > 0 ? average : 0}></Rank>
-      <Rank feedback="positive" grade={positive > 0 ? positive : 0}></Rank>
+      <Statistics stats="average" results={average > 0 ? average : 0}></Statistics>
+      <Statistics stats="positive" results={positive > 0 ? positive : 0}></Statistics>
     </div>
   )
 }
