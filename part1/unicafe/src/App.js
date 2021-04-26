@@ -3,7 +3,9 @@ import React, {useState} from "react";
 const Title = ({title}) => <h1>{title}</h1> 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button> 
 const Rank = ({feedback, grade}) => <div>{feedback} {grade}</div>
+
 const Statistics = (props) => <div>{props.stats} {props.results}</div>
+const NoFeedback = () => <div>No feedback given</div>
 
 const App = () => {
   
@@ -36,12 +38,17 @@ const App = () => {
       <Button onClick={handleBadClick} text="bad"></Button>
 
       <Title title="statistics"></Title>
-      <Rank feedback="good" grade={good}></Rank>
-      <Rank feedback="neutral" grade={neutral}></Rank>
-      <Rank feedback="bad" grade={bad}></Rank>
-
-      <Statistics stats="average" results={average > 0 ? average : 0}></Statistics>
-      <Statistics stats="positive" results={positive > 0 ? positive : 0}></Statistics>
+      {
+        !all 
+          ? <NoFeedback/>
+          : [
+              <Rank feedback="good" grade={good}></Rank>,
+              <Rank feedback="neutral" grade={neutral}></Rank>,
+              <Rank feedback="bad" grade={bad}></Rank>,
+              <Statistics stats="average" results={average > 0 ? average : 0}/>,
+              <Statistics stats="positive" results={positive > 0 ? positive : 0}/>
+            ]
+      }
     </div>
   )
 }
