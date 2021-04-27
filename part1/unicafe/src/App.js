@@ -2,9 +2,9 @@ import React, {useState} from "react";
 
 const Title = ({title}) => <h1>{title}</h1> 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
-const Statistics = (props) => <div>{props.text} {props.results}</div>
+const Statistics = (props) => <tr><td>{props.text}</td> <td>{props.results}</td></tr>
 
-const NoFeedback = () => <div>No feedback given</div>
+const NoFeedback = () => <tr><td>No feedback given</td></tr>
 
 const App = () => {
   
@@ -29,6 +29,15 @@ const App = () => {
   const average = (good - bad) / all;
   const positive = (good * 100) / all;
 
+  const statistics = [
+    <Statistics text="good" results={good}/>,
+    <Statistics text="neutral" results={neutral}/>,
+    <Statistics text="bad" results={bad}/>,
+    <Statistics text="all" results={all}/>,
+    <Statistics text="average" results={average > 0 ? average : 0}/>,
+    <Statistics text="positive" results={positive > 0 ? positive : 0}/>
+  ]
+
   return(
     <div>
       <Title title="give feedback"></Title>
@@ -37,17 +46,13 @@ const App = () => {
       <Button onClick={handleBadClick} text="bad"></Button>
 
       <Title title="statistics"></Title>
+      <table>
       {
         !all 
           ? <NoFeedback/>
-          : [
-              <Statistics text="good" results={good}/>,
-              <Statistics text="neutral" results={neutral}/>,
-              <Statistics text="bad" results={bad}/>,
-              <Statistics text="average" results={average > 0 ? average : 0}/>,
-              <Statistics text="positive" results={positive > 0 ? positive : 0}/>
-            ]
+          : statistics.map(comp => comp)
       }
+      </table>
     </div>
   )
 }
