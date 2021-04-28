@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 
 const Button = (props) => <button onClick={props.onClick}>{props.text}</button>;
-
 const DisplayVote = (props) => <div>has {props.vote} votes</div>;
+const Title = ({ text }) => <h1>{text}</h1>;
+const Anecdote = ({ anecdote }) => <div>{anecdote}</div>;
 
 const App = () => {
   const anecdotes = [
@@ -27,14 +28,20 @@ const App = () => {
     setVote(copy);
   };
 
+  const mostVotes = Math.max.apply(null, vote);
+  const mostVotesIndex = vote.indexOf(mostVotes);
+
   return (
     <div>
-      {anecdotes[selected]}
-      <br />
+      <Title text="Anecdote of the day" />
+      <Anecdote anecdote={anecdotes[selected]} />
       <DisplayVote vote={vote[selected]} />
       <Button onClick={votePhrase} text="vote" />
       &nbsp;
       <Button onClick={nextPhrase} text="next anecdote" />
+      <Title text="Anecdote with most votes" />
+      <Anecdote anecdote={anecdotes[mostVotesIndex]} />
+      <DisplayVote vote={mostVotes} />
     </div>
   );
 };
