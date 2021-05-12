@@ -1,5 +1,33 @@
 import React, { useState } from "react";
 
+const Filter = ({text, newFilter, handleFilterChange}) => {
+  return(
+    <div>
+      {text} <input value={newFilter} onChange={handleFilterChange} />
+    </div>
+  )
+}
+
+const PersonForm = ({onSubmit, newName, newNumber, handleNameChange, handleNumberChange}) => {
+  return(
+    <form onSubmit={onSubmit}>
+      <div>
+        name: <input value={newName} onChange={handleNameChange}/>
+      </div>
+      <div>
+        number: <input value={newNumber} onChange={handleNumberChange}/>
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
+const PersonDetails = ({name, number}) => <p>{name} {number}</p>
+
+
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -52,12 +80,18 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input value={newFilter} onChange={handleFilterChange}></input>
-      </div>
+      <Filter text="filter shown with" newFilter={newFilter} handleFilterChange={handleFilterChange}/>
 
       <h2>add a new</h2>
-      <form onSubmit={addPerson}>
+
+      <PersonForm 
+        onSubmit={addPerson}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
+      {/* <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNameChange}/>
         </div>
@@ -67,11 +101,12 @@ const App = () => {
         <div>
           <button type="submit">add</button>
         </div>
-      </form>
+      </form> */}
+
       <h2>Numbers</h2>
         { newFilter
-          ? filterPersons.map( person => <p key={person.name}>{person.name} {person.number}</p>)
-          : persons.map( person => <p key={person.name}>{person.name} {person.number}</p>)}
+          ? filterPersons.map( person => <PersonDetails key={person.name} name={person.name} number={person.number}/>)
+          : persons.map( person => <PersonDetails key={person.name} name={person.name} number={person.number}/>)}
     </div>
   );
 };
