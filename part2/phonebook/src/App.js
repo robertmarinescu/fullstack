@@ -1,40 +1,11 @@
-import React, { useState } from "react";
-
-const Filter = ({text, newFilter, handleFilterChange}) => {
-  return(
-    <div>
-      {text} <input value={newFilter} onChange={handleFilterChange} />
-    </div>
-  )
-}
-
-const PersonForm = ({onSubmit, newName, newNumber, handleNameChange, handleNumberChange}) => {
-  return(
-    <form onSubmit={onSubmit}>
-      <div>
-        name: <input value={newName} onChange={handleNameChange}/>
-      </div>
-      <div>
-        number: <input value={newNumber} onChange={handleNumberChange}/>
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  )
-}
-
-const PersonDetails = ({name, number}) => <p>{name} {number}</p>
-
-
+import React, { useState, useEffect } from "react";
+import Filter from "./components/Filter"
+import PersonForm from "./components/PersonForm"
+import PersonDetails from './components/PersonDetails'
+import axios from "axios"
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
+  const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -75,6 +46,18 @@ const App = () => {
     setNewNumber("")
   }
 
+  const hook = () => {
+    axios
+      .get("http://localhost:3001/persons")
+      .then(response => {
+        console.log("Promise fulfilled")
+        setPersons(response.data)
+      })
+  }
+
+  useEffect(hook, [])
+
+
   const filterPersons = persons.filter( person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
 
   return (
@@ -83,7 +66,6 @@ const App = () => {
       <Filter text="filter shown with" newFilter={newFilter} handleFilterChange={handleFilterChange}/>
 
       <h2>add a new</h2>
-
       <PersonForm 
         onSubmit={addPerson}
         newName={newName}
@@ -91,17 +73,6 @@ const App = () => {
         newNumber={newNumber}
         handleNumberChange={handleNumberChange}
       />
-      {/* <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form> */}
 
       <h2>Numbers</h2>
         { newFilter
