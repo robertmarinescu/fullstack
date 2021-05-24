@@ -1,17 +1,17 @@
 import React from "react";
-import Course from "./components/Course"
+import Course from "./components/Course";
 
-const Title = () => <h1>Web development curriculum</h1>
+const Title = () => <h1>Web development curriculum</h1>;
 
-const CoursesList = ({courses}) => {
+const CoursesList = ({ courses }) => {
   return (
     <div>
       {courses.map((course) => (
-        <Course key={course.id} course={course}></Course>
+        <Course key={} course={course}></Course>
       ))}
     </div>
-  )
-}
+  );
+};
 
 const App = () => {
   const courses = [
@@ -38,34 +38,33 @@ const App = () => {
           name: "Redux",
           exercises: 11,
           id: 4,
-        }
+        },
       ],
     },
     {
-      name: 'Node.js',
+      name: "Node.js",
       id: 2,
       parts: [
         {
-          name: 'Routing',
+          name: "Routing",
           exercises: 3,
-          id: 1
+          id: 1,
         },
         {
-          name: 'Middlewares',
+          name: "Middlewares",
           exercises: 7,
-          id: 2
-        }
-      ]
-    }
-  ]
+          id: 2,
+        },
+      ],
+    },
+  ];
 
   return (
     <div>
-      <Title/>
-      <CoursesList courses={courses}/>
+      <Title />
+      <CoursesList courses={courses} />
     </div>
-  )
-    
+  );
 };
 
 export default App;
