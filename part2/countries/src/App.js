@@ -6,9 +6,12 @@ const TooManyMatches = () => <p>Too many matches, specify another filter</p>
 const NoCountrySelected = () => <p>No country selected</p>
 const NoCountriesMatched = () => <p>No countries matched</p>
 
+const CountryItem = ({countryName, onClick}) => <p>{countryName.name} <button onClick={onClick}>show</button></p>
+
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [newCountry, setCountry] = useState("");
+  const [showCountry, setShowCountry] = useState([]);
 
   const hook = () => {
     axios
@@ -24,37 +27,50 @@ const App = () => {
 
   const handleCountryChange = (event) => {
     const target = event.target
+    setShowCountry([])
     setCountry(target.value)
   }
 
-  const filterCountries = countries.filter(country => country.name.toLowerCase().includes(newCountry.toLowerCase()))
+  let filterCountries = countries.filter(country => country.name.toLowerCase().includes(newCountry.toLowerCase()))
+
 
   function displayOneCountry(country){
     return <Country key={country.name} country={country}/>
   }
 
+  function displayMultipleCountries(){
+    if(showCountry.length === 1){
+      return <Country key={showCountry.name} country={showCountry[0]}/>
+    }
+    return filterCountries.map(country => {
+      return <CountryItem key={country.name} countryName={country} onClick={()=>displayCurrentCountryTest(country)}></CountryItem>
+    })
+  }
+
+  function displayCurrentCountryTest(country){
+    setShowCountry([])
+    setShowCountry(showCountry.concat(country))
+  }
+
   return (
     <div>
-      <h1>Hello world</h1>
       <form>
         <div>
           find countries <input value={newCountry} onChange={handleCountryChange}/>
         </div>
       </form>
-      
+
       { newCountry
         ? filterCountries.length > 0
           ? filterCountries.length === 1
             ? filterCountries.map(country => displayOneCountry(country))
             : filterCountries.length <= 10
-              ? filterCountries.map(country => {
-                return <p key={country.name}>{country.name}</p>
-              })
+              ? displayMultipleCountries()
               : <TooManyMatches/>
           : <NoCountriesMatched/>
         : <NoCountrySelected/>
-      }
-      
+      } 
+
     </div>
   )
 }
