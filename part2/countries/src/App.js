@@ -1,12 +1,11 @@
 import React, {useState, useEffect} from "react";
 import axios from 'axios';
-import Country from "./components/Country"
+import CountryDetails from "./components/CountryDetails"
+import CountryItem from "./components/CountryItem"
 
 const TooManyMatches = () => <p>Too many matches, specify another filter</p>
 const NoCountrySelected = () => <p>No country selected</p>
 const NoCountriesMatched = () => <p>No countries matched</p>
-
-const CountryItem = ({countryName, onClick}) => <p>{countryName.name} <button onClick={onClick}>show</button></p>
 
 const App = () => {
   const [countries, setCountries] = useState([]);
@@ -24,8 +23,6 @@ const App = () => {
       })
   }
 
-  //* Fetch weather info from api
-
   useEffect(hook, [])
 
   const handleCountryChange = (event) => {
@@ -39,12 +36,12 @@ const App = () => {
 
   function displayOneCountry(country){
     console.log("Display weather details: ")
-    return <Country key={country.name} country={country} />
+    return <CountryDetails key={country.name} country={country} />
   }
 
   function displayMultipleCountries(){
     if(showCountry.length === 1){
-      return <Country key={showCountry.name} country={showCountry[0]} />
+      return <CountryDetails key={showCountry.name} country={showCountry[0]} />
     }
     return filterCountries.map(country => {
       return <CountryItem key={country.name} countryName={country} onClick={()=>displayCurrentCountryTest(country)}></CountryItem>
@@ -73,12 +70,6 @@ const App = () => {
           : <NoCountriesMatched/>
         : <NoCountrySelected/>
       } 
-
-    {/* { showCountry
-      ? <h1>Weather in {showCountry.capital}</h1>
-      : <h1>Nothing</h1>
-    } */}
-
     </div>
   )
 }

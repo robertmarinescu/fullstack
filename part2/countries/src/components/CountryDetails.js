@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios'
+import Weather from './Weather'
 
 const api_key = process.env.REACT_APP_API_KEY
 
-const Country = ({ country}) => {
+const CountryDetails = ({country}) => {
   
   const [weather, setWeather] = useState([]);
 
@@ -28,7 +29,7 @@ const Country = ({ country}) => {
       <h1>{country.name}</h1>
       <p>capital: {country.capital}</p>
       <p>population: {country.population}</p>
-      <h2>languages</h2>
+      <h3>Spoken languages</h3>
       <ul>
         {country.languages.map((language) => {
           return <li key={language.name}>{language.name}</li>;
@@ -36,11 +37,10 @@ const Country = ({ country}) => {
       </ul>
       <img src={country.flag} alt="" width="200" height="200" />
 
-      <h2>Weather in {country.capital}</h2>
-      <h3>Temperature: {weather.current.temperature}</h3>
+      <Weather country={country} weather={weather}></Weather>
 
     </div>
   );
 };
 
-export default Country;
+export default CountryDetails;
