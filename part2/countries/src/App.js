@@ -13,6 +13,7 @@ const App = () => {
   const [newCountry, setCountry] = useState("");
   const [showCountry, setShowCountry] = useState([]);
 
+  //* Fetch country data from api
   const hook = () => {
     axios
       .get("https://restcountries.eu/rest/v2/all")
@@ -22,6 +23,8 @@ const App = () => {
         setCountries(response.data)
       })
   }
+
+  //* Fetch weather info from api
 
   useEffect(hook, [])
 
@@ -35,12 +38,13 @@ const App = () => {
 
 
   function displayOneCountry(country){
-    return <Country key={country.name} country={country}/>
+    console.log("Display weather details: ")
+    return <Country key={country.name} country={country} />
   }
 
   function displayMultipleCountries(){
     if(showCountry.length === 1){
-      return <Country key={showCountry.name} country={showCountry[0]}/>
+      return <Country key={showCountry.name} country={showCountry[0]} />
     }
     return filterCountries.map(country => {
       return <CountryItem key={country.name} countryName={country} onClick={()=>displayCurrentCountryTest(country)}></CountryItem>
@@ -48,8 +52,7 @@ const App = () => {
   }
 
   function displayCurrentCountryTest(country){
-    setShowCountry([])
-    setShowCountry(showCountry.concat(country))
+    setShowCountry([country])
   }
 
   return (
@@ -64,12 +67,17 @@ const App = () => {
         ? filterCountries.length > 0
           ? filterCountries.length === 1
             ? filterCountries.map(country => displayOneCountry(country))
-            : filterCountries.length <= 10
+            : (filterCountries.length <= 10 
               ? displayMultipleCountries()
-              : <TooManyMatches/>
+              : <TooManyMatches/>)
           : <NoCountriesMatched/>
         : <NoCountrySelected/>
       } 
+
+    {/* { showCountry
+      ? <h1>Weather in {showCountry.capital}</h1>
+      : <h1>Nothing</h1>
+    } */}
 
     </div>
   )
