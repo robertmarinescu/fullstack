@@ -1,77 +1,78 @@
 import React, { useState, useEffect } from "react";
-import Filter from "./components/Filter"
-import PersonForm from "./components/PersonForm"
-import PersonDetails from './components/PersonDetails'
-import axios from "axios"
+import Filter from "./components/Filter";
+import PersonForm from "./components/PersonForm";
+import PersonDetails from "./components/PersonDetails";
+import axios from "axios";
+import personService from "./services/persons";
 
 const App = () => {
-  const [persons, setPersons] = useState([])
+  const [persons, setPersons] = useState([]);
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
 
-
   const handleNameChange = (event) => {
-    const target = event.target
+    const target = event.target;
     setNewName(target.value);
-  }
+  };
 
   const handleNumberChange = (event) => {
-    const target = event.target
+    const target = event.target;
     setNewNumber(target.value);
-  }
+  };
 
   const handleFilterChange = (event) => {
-    const target = event.target
+    const target = event.target;
     setNewFilter(target.value);
-  }
+  };
 
   function personExists(person) {
-    return persons.some( p => p.name === person.name)
+    return persons.some((p) => p.name === person.name);
   }
 
   const addPerson = (event) => {
     event.preventDefault();
     const person = {
       name: newName,
-      number: newNumber
-    }
-    if(personExists(person)){
-      alert(`${person.name} is already added to phonebook`)
+      number: newNumber,
+    };
+    if (personExists(person)) {
+      alert(`${person.name} is already added to phonebook`);
       return false;
     }
-    axios
-      .post("http://localhost:3001/persons", person)
-      .then(response => {
-        setPersons(persons.concat(response.data))
-        setNewName("")
-        setNewNumber("")
-      })
-    
-  }
+    personService.create(person).then((person) => {
+      console.log(person);
+      setPersons(persons.concat(person));
+      setNewName("");
+      setNewNumber("");
+    });
+  };
 
   const hook = () => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-        console.log("Promise fulfilled")
-        setPersons(response.data)
-      })
-  }
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log("Promise fulfilled");
+      setPersons(response.data);
+    });
+  };
 
-  useEffect(hook, [])
+  useEffect(hook, []);
 
-
-  const filterPersons = persons.filter( person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
+  const filterPersons = persons.filter((person) =>
+    person.name.toLowerCase().includes(newFilter.toLowerCase())
+  );
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter text="filter shown with" newFilter={newFilter} handleFilterChange={handleFilterChange}/>
+      <Filter
+        text="filter shown with"
+        newFilter={newFilter}
+        handleFilterChange={handleFilterChange}
+      />
 
       <h2>add a new</h2>
-      <PersonForm 
+      <PersonForm
         onSubmit={addPerson}
         newName={newName}
         handleNameChange={handleNameChange}
@@ -80,9 +81,21 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-        { newFilter
-          ? filterPersons.map( person => <PersonDetails key={person.name} name={person.name} number={person.number}/>)
-          : persons.map( person => <PersonDetails key={person.name} name={person.name} number={person.number}/>)}
+      {newFilter
+        ? filterPersons.map((person) => (
+            <PersonDetails
+              key={person.name}
+              name={person.name}
+              number={person.number}
+            />
+          ))
+        : persons.map((person) => (
+            <PersonDetails
+              key={person.name}
+              name={person.name}
+              number={person.number}
+            />
+          ))}
     </div>
   );
 };
