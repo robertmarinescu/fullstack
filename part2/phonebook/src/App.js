@@ -37,7 +37,16 @@ const App = () => {
       number: newNumber,
     };
     if (personExists(person)) {
-      alert(`${person.name} is already added to phonebook`);
+      if (window.confirm(`${person.name} already added`)) {
+        const duplicateUser = persons.find((p) => p.name === person.name);
+        personService.update(duplicateUser.id, person).then(() => {
+          setPersons(
+            persons.filter((p) => p.name !== person.name).concat(person)
+          );
+          setNewName("");
+          setNewNumber("");
+        });
+      }
       return false;
     }
     personService.create(person).then((person) => {
