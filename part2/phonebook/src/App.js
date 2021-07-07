@@ -50,9 +50,9 @@ const App = () => {
   };
 
   const hook = () => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    personService.getAll().then((personList) => {
       console.log("Promise fulfilled");
-      setPersons(response.data);
+      setPersons(personList);
     });
   };
 
