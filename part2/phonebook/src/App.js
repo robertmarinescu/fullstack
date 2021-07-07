@@ -61,7 +61,15 @@ const App = () => {
     person.name.toLowerCase().includes(newFilter.toLowerCase())
   );
 
-  const handleDelete = (id) => {};
+  const handleDelete = (id) => {
+    const user = persons.find((p) => p.id === id);
+    if (window.confirm(`Delete ${user.name}`)) {
+      personService.deleteResource(id).then(() => {
+        console.log("user with id ", id, "deleted");
+        setPersons(persons.filter((p) => p.id !== id));
+      });
+    }
+  };
 
   return (
     <div>
