@@ -37,15 +37,24 @@ const App = () => {
       number: newNumber,
     };
     if (personExists(person)) {
-      if (window.confirm(`${person.name} already added`)) {
+      if (
+        window.confirm(
+          `${person.name} is already added to phonebook, replace the old number with a new one`
+        )
+      ) {
         const duplicateUser = persons.find((p) => p.name === person.name);
-        personService.update(duplicateUser.id, person).then(() => {
-          setPersons(
-            persons.filter((p) => p.name !== person.name).concat(person)
-          );
-          setNewName("");
-          setNewNumber("");
-        });
+        personService
+          .update(duplicateUser.id, person)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((p) =>
+                p.id !== duplicateUser.id ? p : returnedPerson
+              )
+            );
+            setNewName("");
+            setNewNumber("");
+          });
+        console.log(persons);
       }
       return false;
     }
@@ -72,6 +81,7 @@ const App = () => {
 
   const handleDelete = (id) => {
     const user = persons.find((p) => p.id === id);
+    console.log("id-ul userului este", user.id);
     if (window.confirm(`Delete ${user.name}`)) {
       personService.deleteResource(id).then(() => {
         console.log("user with id ", id, "deleted");
