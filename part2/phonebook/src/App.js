@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
-import PersonDetails from "./components/PersonDetails";
-import axios from "axios";
 import personService from "./services/persons";
+import Persons from "./components/Persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -62,6 +61,8 @@ const App = () => {
     person.name.toLowerCase().includes(newFilter.toLowerCase())
   );
 
+  const handleDelete = (id) => {};
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -81,21 +82,13 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      {newFilter
-        ? filterPersons.map((person) => (
-            <PersonDetails
-              key={person.name}
-              name={person.name}
-              number={person.number}
-            />
-          ))
-        : persons.map((person) => (
-            <PersonDetails
-              key={person.name}
-              name={person.name}
-              number={person.number}
-            />
-          ))}
+
+      <Persons
+        newFilter={newFilter}
+        filterPersons={filterPersons}
+        persons={persons}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };
