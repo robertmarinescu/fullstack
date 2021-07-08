@@ -95,10 +95,21 @@ const App = () => {
     const user = persons.find((p) => p.id === id);
     console.log("id-ul userului este", user.id);
     if (window.confirm(`Delete ${user.name}`)) {
-      personService.deleteResource(id).then(() => {
-        console.log("user with id ", id, "deleted");
-        setPersons(persons.filter((p) => p.id !== id));
-      });
+      personService
+        .deleteResource(id)
+        .then(() => {
+          console.log("user with id ", id, "deleted");
+          setPersons(persons.filter((p) => p.id !== id));
+        })
+        .catch((error) => {
+          setMessage(
+            `Information of ${user.name} has already been removed from the server`
+          );
+          setTimeout(() => {
+            setMessage(null);
+            window.location.reload();
+          }, 3000);
+        });
     }
   };
 
