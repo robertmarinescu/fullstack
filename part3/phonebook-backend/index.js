@@ -1,3 +1,4 @@
+const { response } = require("express");
 const express = require("express");
 const app = express();
 
@@ -55,6 +56,46 @@ app.delete("/api/persons/:id", (req, res) => {
   persons = persons.filter((person) => person.id !== id);
 
   return res.status(204).end();
+});
+
+const findUserByName = (name) => {
+  const person = persons.find((person) => person.name === name);
+  return person ? true : false;
+};
+
+const generateId = () => {
+  return Math.floor(Math.random() * 100000);
+};
+
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  if (!body.name) {
+    return res.status(400).json({
+      error: "name cannot be empty",
+    });
+  }
+
+  if (!body.number) {
+    return res.status(400).json({
+      error: "number cannot be empty",
+    });
+  }
+
+  if (findUserByName(body.name)) {
+    return res.status(400).json({
+      error: "name must be unique",
+    });
+  }
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  };
+
+  persons = [...persons, person];
+  console.log(person);
+  return res.json(person);
 });
 
 const PORT = 3001;
