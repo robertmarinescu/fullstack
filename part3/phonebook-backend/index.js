@@ -1,8 +1,17 @@
-const { response } = require("express");
 const express = require("express");
 const app = express();
 
 app.use(express.json());
+
+const requestLogger = (request, response, next) => {
+  console.log("Method:", request.method);
+  console.log("Path:  ", request.path);
+  console.log("Body:  ", request.body);
+  console.log("---");
+  next();
+};
+
+app.use(requestLogger);
 
 let persons = [
   {
@@ -44,10 +53,10 @@ app.get("/info", (req, res) => {
   );
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const id = Number(req.params.id);
   const person = persons.find((person) => person.id === id);
-
+  console.log(person);
   return person ? res.json(person) : res.status(404).end();
 });
 
