@@ -39,11 +39,19 @@ if (process.argv.length === 3) {
       console.log(person);
     });
     mongoose.connection.close();
-    process.exit(1);
+    process.exit();
+    // return;
   });
 }
 
-person.save().then((result) => {
-  console.log(`added ${name} number ${phoneNumber} to phonebook`);
+if (process.argv.length === 5) {
+  person.save().then((result) => {
+    console.log(`added ${name} number ${phoneNumber} to phonebook`);
+    mongoose.connection.close();
+  });
+}
+
+if (process.argv.length === 4 || process.argv.length > 5) {
+  console.log("Please provide the right number of arguments, 3 or 5.");
   mongoose.connection.close();
-});
+}
