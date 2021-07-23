@@ -5,9 +5,9 @@ const morgan = require("morgan");
 const app = express();
 const Person = require("./models/person");
 
-app.use(cors());
 app.use(express.static("build"));
 app.use(express.json());
+app.use(cors());
 
 morgan.token("details", (req, res) => {
   return JSON.stringify(req.body);
@@ -18,6 +18,20 @@ app.use(
     ":method :url :status :res[content-length] - :response-time ms :details"
   )
 );
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+const errorHandler = (err, req, res, next) => {
+  console.error(err.message);
+
+  if (err.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+
+  next(err);
+};
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello there!</h1>");
@@ -46,10 +60,11 @@ app.get("/api/persons/:id", (req, res, next) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter((person) => person.id !== id);
-
-  return res.status(204).end();
+  Person.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 const findUserByName = (name) => {
@@ -72,11 +87,11 @@ app.post("/api/persons", (req, res) => {
     });
   }
 
-  if (findUserByName(body.name)) {
-    return res.status(400).json({
-      error: "name must be unique",
-    });
-  }
+  // if (findUserByName(body.name)) {
+  //   return res.status(400).json({
+  //     error: "name must be unique",
+  //   });
+  // }
   const person = new Person({
     name: body.name,
     number: body.number,
@@ -86,6 +101,9 @@ app.post("/api/persons", (req, res) => {
     res.json(savedPerson);
   });
 });
+
+app.use(errorHandler);
+app.use(unknownEndpoint);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
