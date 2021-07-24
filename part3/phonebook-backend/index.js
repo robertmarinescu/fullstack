@@ -23,14 +23,14 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
 
-const errorHandler = (err, req, res, next) => {
-  console.error(err.message);
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
 
-  if (err.name === "CastError") {
-    return res.status(400).send({ error: "malformatted id" });
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
   }
 
-  next(err);
+  next(error);
 };
 
 app.get("/", (req, res) => {
@@ -53,10 +53,11 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res, next) => {
-  Person.findById(req.params.id).then((person) => {
-    res.json(person);
-    console.log(person);
-  });
+  Person.findById(req.params.id)
+    .then((person) => {
+      return person ? res.json(person) : res.status(404).end();
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -100,6 +101,21 @@ app.post("/api/persons", (req, res) => {
   person.save().then((savedPerson) => {
     res.json(savedPerson);
   });
+});
+
+app.put("/api/persons", (req, res, next) => {
+  const body = request.body;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      res.json(updatedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 app.use(errorHandler);
