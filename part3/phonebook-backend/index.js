@@ -103,8 +103,8 @@ app.post("/api/persons", (req, res) => {
   });
 });
 
-app.put("/api/persons", (req, res, next) => {
-  const body = request.body;
+app.put("/api/persons/:id", (req, res, next) => {
+  const body = req.body;
 
   const person = {
     name: body.name,
