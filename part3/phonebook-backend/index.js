@@ -78,23 +78,6 @@ const findUserByName = (name) => {
 app.post("/api/persons", (req, res, next) => {
   const body = req.body;
 
-  // if (!body.name) {
-  //   return res.status(400).json({
-  //     error: "name cannot be empty",
-  //   });
-  // }
-
-  // if (!body.number) {
-  //   return res.status(400).json({
-  //     error: "number cannot be empty",
-  //   });
-  // }
-
-  // if (findUserByName(body.name)) {
-  //   return res.status(400).json({
-  //     error: "name must be unique",
-  //   });
-  // }
   const person = new Person({
     name: body.name,
     number: body.number,
@@ -119,16 +102,12 @@ app.put("/api/persons/:id", (req, res, next) => {
   Person.findOneAndUpdate({ _id: req.params.id }, person, {
     new: true,
     runValidators: true,
+    context: "query",
   })
     .then((updatedPerson) => {
       res.json(updatedPerson);
     })
     .catch((error) => next(error));
-  // Person.findByIdAndUpdate(req.params.id, person, { new: true })
-  //   .then((updatedPerson) => {
-  //     res.json(updatedPerson);
-  //   })
-  //   .catch((error) => next(error));
 });
 
 app.use(errorHandler);
