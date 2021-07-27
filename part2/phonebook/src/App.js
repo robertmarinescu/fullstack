@@ -61,21 +61,38 @@ const App = () => {
             setTimeout(() => {
               setMessage(null);
             }, 3000);
+          })
+          .catch((error) => {
+            setMessage(`Error: ${error.response.data.error}`);
+            setTimeout(() => {
+              setMessage(null);
+              // window.location.reload();
+            }, 3000);
           });
         console.log(persons);
       }
       return false;
     }
-    personService.create(person).then((person) => {
-      console.log(person);
-      setPersons(persons.concat(person));
-      setNewName("");
-      setNewNumber("");
-      setMessage(`Added ${person.name}`);
-      setTimeout(() => {
-        setMessage(null);
-      }, 3000);
-    });
+    personService
+      .create(person)
+      .then((person) => {
+        console.log(person);
+        setPersons(persons.concat(person));
+        setNewName("");
+        setNewNumber("");
+        setMessage(`Added ${person.name}`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 3000);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+        setMessage(`Error: ${error.response.data.error}`);
+        setTimeout(() => {
+          setMessage(null);
+          // window.location.reload();
+        }, 3000);
+      });
   };
 
   const hook = () => {

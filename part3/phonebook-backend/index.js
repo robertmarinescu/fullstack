@@ -116,11 +116,19 @@ app.put("/api/persons/:id", (req, res, next) => {
     number: body.number,
   };
 
-  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  Person.findOneAndUpdate({ _id: req.params.id }, person, {
+    new: true,
+    runValidators: true,
+  })
     .then((updatedPerson) => {
       res.json(updatedPerson);
     })
     .catch((error) => next(error));
+  // Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  //   .then((updatedPerson) => {
+  //     res.json(updatedPerson);
+  //   })
+  //   .catch((error) => next(error));
 });
 
 app.use(errorHandler);
