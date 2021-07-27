@@ -28,6 +28,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
@@ -73,20 +75,20 @@ const findUserByName = (name) => {
   return person ? true : false;
 };
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
 
-  if (!body.name) {
-    return res.status(400).json({
-      error: "name cannot be empty",
-    });
-  }
+  // if (!body.name) {
+  //   return res.status(400).json({
+  //     error: "name cannot be empty",
+  //   });
+  // }
 
-  if (!body.number) {
-    return res.status(400).json({
-      error: "number cannot be empty",
-    });
-  }
+  // if (!body.number) {
+  //   return res.status(400).json({
+  //     error: "number cannot be empty",
+  //   });
+  // }
 
   // if (findUserByName(body.name)) {
   //   return res.status(400).json({
@@ -98,9 +100,12 @@ app.post("/api/persons", (req, res) => {
     number: body.number,
   });
 
-  person.save().then((savedPerson) => {
-    res.json(savedPerson);
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson.toJSON());
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
