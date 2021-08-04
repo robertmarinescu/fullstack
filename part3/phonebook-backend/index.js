@@ -47,15 +47,6 @@ app.get('/api/persons', (req, res) => {
 
 app.get('/info', async (req, res) => {
   const count = await Person.countDocuments({}, (err, c) => console.log(c)).then(nr => nr)
-
-
-
-  // async function count() {
-  //   return await Person.countDocuments({}, (err, c) => console.log(c)).then(nr => nr)
-  // }
-
-
-  // console.log(count)
   res.send(
     `<div>
         <p>Phonebook has info for ${count} people</p>
