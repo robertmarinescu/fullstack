@@ -5,6 +5,7 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
+const logger = require('./utils/logger')
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -16,11 +17,8 @@ const blogSchema = new mongoose.Schema({
 const Blog = mongoose.model('Blog', blogSchema)
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-  .then(result => console.log('connected to MongoDB'))
-  .catch(error => {
-    console.log('error connecting to MongoDB', error.message)
-    console.log(config.MONGODB_URI)
-  })
+  .then(result => logger.info('connected to MongoDB'))
+  .catch(error => logger.info('error connecting to MongoDB', error.message))
 
 app.use(cors())
 app.use(express.json())
