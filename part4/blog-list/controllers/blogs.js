@@ -8,6 +8,18 @@ blogsRouter.get('/', (request, response) => {
         response.json(blogs)
       })
   })
+
+blogsRouter.get('/:id', (request, response) => {
+  Blog.findById(request.params.id)
+    .then(blog => {
+      if(blog) {
+        response.json(blog)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
+})
   
 blogsRouter.post('/', (request, response) => {
     const blog = new Blog(request.body)
