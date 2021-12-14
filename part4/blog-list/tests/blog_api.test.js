@@ -31,7 +31,7 @@ test('check that id property exists', async () => {
   response.body.forEach(blog => expect(blog.id).toBeDefined())
 })
 
-test.only('add a valid blog into the database', async () => {
+test('add a valid blog into the database', async () => {
   const newBlog = {
     title: "Gates Notes",
     author: "Bill Gates",
@@ -45,12 +45,60 @@ test.only('add a valid blog into the database', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const notes = await helper.notesInDb()
-  expect(notes).toHaveLength(helper.initial_blogs.length + 1)
+  const blogs = await helper.blogsInDb()
+  expect(blogs).toHaveLength(helper.initial_blogs.length + 1)
 
-  const title = notes[2].title
+  const title = blogs[2].title
   expect(title).toEqual('Gates Notes')
 })
+
+test('if like property is missing check that it\'s value is equal to 0', async () => {
+  const newBlog = {
+    title: "Future of Humanity",
+    author: "Elon Musk",
+    url: "http://www.futureofhumanity.com",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogs = await helper.blogsInDb()
+
+  expect(blogs).toHaveLength(helper.initial_blogs.length + 1)
+  expect(blogs[helper.initial_blogs.length].likes).toBe(0);
+})
+
+test.only('check if the TITLE is missing in the added blog', async () => {
+  const newBlog = {
+    author: "Elon Musk",
+    url: "http://www.futureofhumanity.com",
+    likes: 10
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+})
+
+test.only('check if the URL is missing in the added blog', async () => {
+  const newBlog = {
+    author: "Elon Musk",
+    title: "Future of Humanity",
+    likes: 10
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+})
+
 
 afterAll(() => {
   mongoose.connection.close()
