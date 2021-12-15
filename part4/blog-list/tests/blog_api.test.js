@@ -71,7 +71,7 @@ test('if like property is missing check that it\'s value is equal to 0', async (
   expect(blogs[helper.initial_blogs.length].likes).toBe(0);
 })
 
-test.only('check if the TITLE is missing in the added blog', async () => {
+test('check if the TITLE is missing in the added blog', async () => {
   const newBlog = {
     author: "Elon Musk",
     url: "http://www.futureofhumanity.com",
@@ -85,7 +85,7 @@ test.only('check if the TITLE is missing in the added blog', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-test.only('check if the URL is missing in the added blog', async () => {
+test('check if the URL is missing in the added blog', async () => {
   const newBlog = {
     author: "Elon Musk",
     title: "Future of Humanity",
@@ -97,6 +97,40 @@ test.only('check if the URL is missing in the added blog', async () => {
     .send(newBlog)
     .expect(400)
     .expect('Content-Type', /application\/json/)
+})
+
+test('check that a resource is successfully deleted', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAfterDelete = await helper.blogsInDb()
+  expect(blogsAfterDelete).toHaveLength(helper.initial_blogs.length - 1)
+
+  const titles = blogsAfterDelete.map(r => r.title)
+  expect(titles).not.toContain(blogToDelete.title)
+})
+
+describe('test updating resources', () => {
+  test.only('update blog resource', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    const blog = {
+      likes: 150
+    }
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blog)
+      .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const blogsLikes = blogsAtEnd.map(r => r.likes)
+    expect(blogsLikes[0]).toEqual(blog.likes)
+
+  })
 })
 
 
