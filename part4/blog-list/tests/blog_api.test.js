@@ -4,6 +4,8 @@ const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -11,6 +13,18 @@ beforeEach(async () => {
   for (let blog of helper.initial_blogs){
     let blogObject = new Blog(blog)
     await blogObject.save()
+  }
+
+  await User.deleteMany({})
+  const saltRounds = 10
+  for (let user of helper.initial_users){
+    let passwordHash = await bcrypt.hash(user.password, saltRounds)
+    let userObject = new User({
+      username: user.username,
+      name: user.name,
+      passwordHash
+    })
+    await userObject.save()
   }
 })
 
@@ -33,9 +47,9 @@ test('check that id property exists', async () => {
 
 test('add a valid blog into the database', async () => {
   const newBlog = {
-    title: "Gates Notes",
-    author: "Bill Gates",
-    url: "http://www.gatesnotes.com",
+    title: 'Gates Notes',
+    author: 'Bill Gates',
+    url: 'http://www.gatesnotes.com',
     likes: 50
   }
 
@@ -54,9 +68,9 @@ test('add a valid blog into the database', async () => {
 
 test('if like property is missing check that it\'s value is equal to 0', async () => {
   const newBlog = {
-    title: "Future of Humanity",
-    author: "Elon Musk",
-    url: "http://www.futureofhumanity.com",
+    title: 'Future of Humanity',
+    author: 'Elon Musk',
+    url: 'http://www.futureofhumanity.com',
   }
 
   await api
@@ -73,8 +87,8 @@ test('if like property is missing check that it\'s value is equal to 0', async (
 
 test('check if the TITLE is missing in the added blog', async () => {
   const newBlog = {
-    author: "Elon Musk",
-    url: "http://www.futureofhumanity.com",
+    author: 'Elon Musk',
+    url: 'http://www.futureofhumanity.com',
     likes: 10
   }
 
@@ -87,8 +101,8 @@ test('check if the TITLE is missing in the added blog', async () => {
 
 test('check if the URL is missing in the added blog', async () => {
   const newBlog = {
-    author: "Elon Musk",
-    title: "Future of Humanity",
+    author: 'Elon Musk',
+    title: 'Future of Humanity',
     likes: 10
   }
 
@@ -115,7 +129,7 @@ test('check that a resource is successfully deleted', async () => {
 })
 
 describe('test updating resources', () => {
-  test.only('update blog resource', async () => {
+  test('update blog resource', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
     const blog = {
@@ -130,6 +144,45 @@ describe('test updating resources', () => {
     const blogsLikes = blogsAtEnd.map(r => r.likes)
     expect(blogsLikes[0]).toEqual(blog.likes)
 
+  })
+})
+
+describe('check that invalid users are not created', () => {
+  test.only('invalid users are not created', async () => {
+    const invalidUser = {
+      username: 'johnsmith',
+      name: 'John Spencer',
+      password: 'john'
+    }
+    
+    await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    const users = await helper.usersInDb()
+    expect(users).toHaveLength(helper.initial_users.length)
+
+    const names = users.map(user => user.name)
+    expect(names).not.toContain(invalidUser.name)
+  })
+
+
+  test.only('invalid add user operation returns a suitable status code and error message', async () => {
+    const invalidUser = {
+      username: 'johnsmith',
+      name: 'John Smith',
+      password: 'john'
+    }
+    
+    const result = await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    expect(result.body.error).toContain('`username` to be unique')
   })
 })
 
