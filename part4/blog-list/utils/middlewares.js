@@ -21,7 +21,9 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
-  }
+  } else if (error.name === 'JsonWebTokenError'){
+    return response.status(401).json({ error: error.message })
+  } 
 
   next(error)
 }
@@ -41,16 +43,20 @@ const userExtractor = async (request, response, next) => {
     console.log('THE TOKEN IS NULL')
     return response.status(401).json({error: 'token missing or invalid'})
   } else {
-    console.log('THE TOKEN IS NOT NULL =>>>>', request.token)
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    console.log('This is the decoded token', decodedToken)
-    if(!request.token || !decodedToken || !decodedToken.id) {
-      request.user = null;
-      // return response.status(401).json({ error: 'token missing or invalid' })
-    } else {
-      const user = await User.findById(decodedToken.id)
-      request.user = user
-      next()
+    try {
+      console.log('THE TOKEN IS NOT NULL =>>>>', request.token)
+      const decodedToken = jwt.verify(request.token, process.env.SECRET)
+      console.log('This is the decoded token', decodedToken)
+      if(!request.token || !decodedToken || !decodedToken.id) {
+        request.user = null;
+        return response.status(401).json({ error: 'token missing or invalid' })
+      } else {
+        const user = await User.findById(decodedToken.id)
+        request.user = user
+        next()
+      }
+    } catch (exception) {
+      next(exception)
     }
   }
 

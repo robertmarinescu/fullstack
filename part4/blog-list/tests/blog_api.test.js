@@ -15,17 +15,17 @@ beforeEach(async () => {
     await blogObject.save()
   }
 
-  await User.deleteMany({})
-  const saltRounds = 10
-  for (let user of helper.initial_users){
-    let passwordHash = await bcrypt.hash(user.password, saltRounds)
-    let userObject = new User({
-      username: user.username,
-      name: user.name,
-      passwordHash
-    })
-    await userObject.save()
-  }
+  // await User.deleteMany({})
+  // const saltRounds = 10
+  // for (let user of helper.initial_users){
+  //   let passwordHash = await bcrypt.hash(user.password, saltRounds)
+  //   let userObject = new User({
+  //     username: user.username,
+  //     name: user.name,
+  //     passwordHash
+  //   })
+  //   await userObject.save()
+  // }
 })
 
 test('blogs are returned as json', async () => {
@@ -45,72 +45,111 @@ test('check that id property exists', async () => {
   response.body.forEach(blog => expect(blog.id).toBeDefined())
 })
 
-test('add a valid blog into the database', async () => {
-  const newBlog = {
-    title: 'Gates Notes',
-    author: 'Bill Gates',
-    url: 'http://www.gatesnotes.com',
-    likes: 50
-  }
+describe('addition of a new blog', () => {
+  let token = null
+  beforeAll(async () => {
+    await User.deleteMany({})
+    const passwordHash = await bcrypt.hash('password', 10)
+    const user = new User({username: 'michael', passwordHash})
+    await user.save()
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    await api
+      .post('/api/login')
+      .send({ username: 'michael', password: 'password' })
+      .then(res => {
+        console.log('This is the TOKEN', res.body.token)
+        return token = res.body.token
+    })
+  })
 
-  const blogs = await helper.blogsInDb()
-  expect(blogs).toHaveLength(helper.initial_blogs.length + 1)
+  test.only('add a valid blog into the database', async () => {
+    const newBlog = {
+      title: 'Gates Notes',
+      author: 'Bill Gates',
+      url: 'http://www.gatesnotes.com',
+      likes: 50
+    }
+  
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+  
+    const blogs = await helper.blogsInDb()
+    expect(blogs).toHaveLength(helper.initial_blogs.length + 1)
+  
+    const title = blogs[2].title
+    expect(title).toEqual('Gates Notes')
+  })
 
-  const title = blogs[2].title
-  expect(title).toEqual('Gates Notes')
-})
+  test.only('unauthorized user cannot create a blog', async () => {
+    const newBlog = {
+      title: 'New blog',
+      author: 'Jane Doe',
+      url: 'http://dummyurl.com',
+    }
 
-test('if like property is missing check that it\'s value is equal to 0', async () => {
-  const newBlog = {
-    title: 'Future of Humanity',
-    author: 'Elon Musk',
-    url: 'http://www.futureofhumanity.com',
-  }
+    token = null
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
+      .send(newBlog)
+      .expect(401)
 
-  const blogs = await helper.blogsInDb()
+    const blogsAtEnd = await helper.blogsInDb()
 
-  expect(blogs).toHaveLength(helper.initial_blogs.length + 1)
-  expect(blogs[helper.initial_blogs.length].likes).toBe(0);
-})
+    expect(blogsAtEnd).toHaveLength(helper.initial_blogs.length)
+  })
 
-test('check if the TITLE is missing in the added blog', async () => {
-  const newBlog = {
-    author: 'Elon Musk',
-    url: 'http://www.futureofhumanity.com',
-    likes: 10
-  }
+  test('if like property is missing check that it\'s value is equal to 0', async () => {
+    const newBlog = {
+      title: 'Future of Humanity',
+      author: 'Elon Musk',
+      url: 'http://www.futureofhumanity.com',
+    }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
-})
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-test('check if the URL is missing in the added blog', async () => {
-  const newBlog = {
-    author: 'Elon Musk',
-    title: 'Future of Humanity',
-    likes: 10
-  }
+    const blogs = await helper.blogsInDb()
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
+    expect(blogs).toHaveLength(helper.initial_blogs.length + 1)
+    expect(blogs[helper.initial_blogs.length].likes).toBe(0);
+  })
+
+  test('check if the TITLE is missing in the added blog', async () => {
+    const newBlog = {
+      author: 'Elon Musk',
+      url: 'http://www.futureofhumanity.com',
+      likes: 10
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('check if the URL is missing in the added blog', async () => {
+    const newBlog = {
+      author: 'Elon Musk',
+      title: 'Future of Humanity',
+      likes: 10
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+  })
 })
 
 test('check that a resource is successfully deleted', async () => {
@@ -148,7 +187,7 @@ describe('test updating resources', () => {
 })
 
 describe('check that invalid users are not created', () => {
-  test.only('invalid users are not created', async () => {
+  test('invalid users are not created', async () => {
     const invalidUser = {
       username: 'johnsmith',
       name: 'John Spencer',
@@ -169,7 +208,7 @@ describe('check that invalid users are not created', () => {
   })
 
 
-  test.only('invalid add user operation returns a suitable status code and error message', async () => {
+  test('invalid add user operation returns a suitable status code and error message', async () => {
     const invalidUser = {
       username: 'johnsmith',
       name: 'John Smith',
