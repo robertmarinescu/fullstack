@@ -11,9 +11,15 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  // useEffect(() => {
-  //   fetchBlogs()
-  // }, [])
+  useEffect(() => {
+    const loggedOnUserJson = window.localStorage.getItem('loggedOnAppBlogList')
+    if(loggedOnUserJson){
+      const user = JSON.parse(loggedOnUserJson)
+      setUser(user)
+      blogService.setToken(user.token)
+      fetchBlogs()
+    } 
+  }, [])
 
   const fetchBlogs = () => {
     blogService.getAll().then(blogs =>{
@@ -21,10 +27,12 @@ const App = () => {
       setBlogs(blogs)
     }) 
   }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({username, password})
+      window.localStorage.setItem('loggedOnAppBlogList', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       fetchBlogs()
@@ -38,51 +46,57 @@ const App = () => {
     }
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
+  const handleLogOut = async (event) => {
+    window.localStorage.removeItem('loggedOnAppBlogList')
+    setUser(null)
+  }
+
+  const loginForm = () => {
+    if(user === null) {
+      return (
+       <div>
+         <h2>Log in to application</h2>
+         <form onSubmit={handleLogin}>
+           <div>
+             username
+               <input
+               type="text"
+               value={username}
+               name="Username"
+               onChange={({ target }) => setUsername(target.value)}
+             />
+           </div>
+           <div>
+             password
+               <input
+               type="password"
+               value={password}
+               name="Password"
+               onChange={({ target }) => setPassword(target.value)}
+             />
+           </div>
+           <button type="submit">login</button>
+         </form>
+       </div> 
+      )
+    }
+    return (
       <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
+        <h2>blogs</h2>
+        <p>{user.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+        <div>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} />
+          )}
+        </div> 
       </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>  
-  )
+    )  
+  }
 
   return (
     <div>
       <Notification message={errorMessage} />
-      
-      {user === null ? 
-        <div>
-          <h1>log in to application</h1>
-          {loginForm()}
-        </div> :
-        <div>
-          <h2>blogs</h2>
-          <p>{user.name} logged-in</p>
-          <div>
-            {console.log(user.name)}
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
-            )}
-          </div>
-          
-        </div>
-      }
+      {loginForm()}
 
     </div>
   )
