@@ -1,6 +1,6 @@
-import React, {forwardRef, useImperativeHandle, useState} from 'react'
+import React, { useState } from 'react'
 
-const Togglable = forwardRef((props, ref) => {
+const BlogView = (props) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
@@ -10,23 +10,16 @@ const Togglable = forwardRef((props, ref) => {
     setVisible(!visible)
   }
 
-  useImperativeHandle(ref, () => {
-    return {
-      toggleVisibility
-    }
-  })
-
-  return(
+  return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
       </div>
     </div>
   )
-})
+}
 
-export default Togglable
+export default BlogView

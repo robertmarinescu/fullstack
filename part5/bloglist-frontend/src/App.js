@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
@@ -12,6 +12,8 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  
+  const blogFormRef = useRef()
 
   useEffect(() => {
     const loggedOnUserJson = window.localStorage.getItem('loggedOnAppBlogList')
@@ -54,6 +56,7 @@ const App = () => {
   }
 
   const addBlog = blogObject => {
+    blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then(blogObject => setBlogs(blogs.concat(blogObject)))
     setMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
     setTimeout(() => {
@@ -95,7 +98,7 @@ const App = () => {
       <div>
         <h2>blogs</h2>
         <p>{user.name} logged-in <button onClick={handleLogOut}>logout</button></p>
-        <Togglable buttonLabel='new blog'>
+        <Togglable buttonLabel='new blog' ref={blogFormRef}>
           <BlogForm createBlog={addBlog} />
         </Togglable>
         <div>
