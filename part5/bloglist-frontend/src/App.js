@@ -65,6 +65,20 @@ const App = () => {
     fetchBlogs()
   }
 
+  const deleteBlog = id => {
+    blogService
+        .deleteResource(id)
+        .then(() => {
+          setBlogs(blogs.filter((b) => b.id !== id))
+        })
+        .catch((error) => {
+          setMessage(`${error.response.data.error}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+        })
+  }
+
   const loginForm = () => {
     if(user === null) {
       return (
@@ -106,7 +120,7 @@ const App = () => {
             blogs
               .sort((a, b) => (a.likes > b.likes) ? 1 : -1)
               .map(blog =>
-                <Blog key={blog.id} blog={blog} blogs={blogs}/>
+                <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog}/>
               )
           }
         </div> 
