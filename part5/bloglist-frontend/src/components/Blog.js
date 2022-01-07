@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({blog, deleteBlog}) => {
+const Blog = ({ blog, deleteBlog }) => {
   const [visible, setVisible] = useState(false)
   const [like, setLike] = useState(blog.likes)
 
@@ -18,7 +18,7 @@ const Blog = ({blog, deleteBlog}) => {
   const viewBlogDetails = () => {
     setVisible(!visible)
   }
-  
+
   const addLike = () => {
     let id = blog.id
     let likes = blog.likes + 1
@@ -31,7 +31,7 @@ const Blog = ({blog, deleteBlog}) => {
     }
     blogService
       .update(id, newObject)
-      .then(()=> setLike(likes))
+      .then(() => setLike(likes))
   }
 
   const removeBlog = () => {
@@ -49,9 +49,10 @@ const Blog = ({blog, deleteBlog}) => {
       <div style={showWhenVisible}>
         <p>{blog.url}</p>
         <p>{like} <button onClick={() => addLike()}>like</button></p>
-        <p>{blog.user?.name ? blog.user.name : 'no owner'}</p>
+        <p>{blog.user.name}</p>
+        {/* <p>{blog.user?.name ? blog.user.name : 'no owner'}</p> */}
         <button onClick={() => removeBlog()}>remove</button>
-      </div>  
+      </div>
     </div>
   )
 }

@@ -12,7 +12,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  
+
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -22,20 +22,20 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
       fetchBlogs()
-    } 
+    }
   }, [])
 
   const fetchBlogs = () => {
-    blogService.getAll().then(blogs =>{
+    blogService.getAll().then(blogs => {
       console.log(blogs)
       setBlogs(blogs)
-    }) 
+    })
   }
 
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({username, password})
+      const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedOnAppBlogList', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
@@ -50,7 +50,7 @@ const App = () => {
     }
   }
 
-  const handleLogOut = async (event) => {
+  const handleLogOut = async () => {
     window.localStorage.removeItem('loggedOnAppBlogList')
     setUser(null)
   }
@@ -67,45 +67,45 @@ const App = () => {
 
   const deleteBlog = id => {
     blogService
-        .deleteResource(id)
-        .then(() => {
-          setBlogs(blogs.filter((b) => b.id !== id))
-        })
-        .catch((error) => {
-          setMessage(`${error.response.data.error}`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
-        })
+      .deleteResource(id)
+      .then(() => {
+        setBlogs(blogs.filter((b) => b.id !== id))
+      })
+      .catch((error) => {
+        setMessage(`${error.response.data.error}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      })
   }
 
   const loginForm = () => {
     if(user === null) {
       return (
-       <div>
-         <h2>Log in to application</h2>
-         <form onSubmit={handleLogin}>
-           <div>
+        <div>
+          <h2>Log in to application</h2>
+          <form onSubmit={handleLogin}>
+            <div>
              username
-               <input
-               type="text"
-               value={username}
-               name="Username"
-               onChange={({ target }) => setUsername(target.value)}
-             />
-           </div>
-           <div>
+              <input
+                type="text"
+                value={username}
+                name="Username"
+                onChange={({ target }) => setUsername(target.value)}
+              />
+            </div>
+            <div>
              password
-               <input
-               type="password"
-               value={password}
-               name="Password"
-               onChange={({ target }) => setPassword(target.value)}
-             />
-           </div>
-           <button type="submit">login</button>
-         </form>
-       </div> 
+              <input
+                type="password"
+                value={password}
+                name="Password"
+                onChange={({ target }) => setPassword(target.value)}
+              />
+            </div>
+            <button type="submit">login</button>
+          </form>
+        </div>
       )
     }
     return (
@@ -123,9 +123,9 @@ const App = () => {
                 <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog}/>
               )
           }
-        </div> 
+        </div>
       </div>
-    )  
+    )
   }
 
   return (
