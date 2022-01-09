@@ -21,7 +21,6 @@ const Blog = ({ blog, deleteBlog, updateBlogLikes }) => {
 
   const updateLike = () => {
     let id = blog.id
-    // let likes = like + 1
     const newObject = {
       user: blog.user?.id,
       likes: blog.likes + 1,
@@ -30,9 +29,6 @@ const Blog = ({ blog, deleteBlog, updateBlogLikes }) => {
       url: blog.url
     }
     updateBlogLikes(id, newObject)
-    // blogService
-    //   .update(id, newObject)
-    //   .then(() => setLike(likes))
   }
 
   const removeBlog = () => {
