@@ -43,15 +43,15 @@ const Blog = ({ blog, deleteBlog, updateBlogLikes }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div data-cy='blog' style={blogStyle}>
       <div>
-        <span className='blogTitle'>{blog.title}</span>
+        <span className='blogTitle'>{blog.title} </span>
         <span className='blogAuthor'>{blog.author}</span>
         <button className='toggleVisibilityButton' onClick={() => viewBlogDetails()}>{visible ? 'hide' : 'view'}</button>
       </div>
       <div style={showWhenVisible} className='hiddenContent'>
         <p className='blogUrl'>{blog.url}</p>
-        <p className='blogLikes'>{blog.likes} <button onClick={() => updateLike()}>like</button></p>
+        <p data-cy='likes' className='blogLikes'>{blog.likes} <button onClick={() => updateLike()}>like</button></p>
         <p className='blogUser'>{blog.user?.name}</p>
         {/* <p>{blog.user?.name ? blog.user.name : 'no owner'}</p> */}
         <button className='removeBlog' onClick={() => removeBlog()}>remove</button>
