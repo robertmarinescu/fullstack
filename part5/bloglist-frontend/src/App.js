@@ -65,6 +65,21 @@ const App = () => {
     fetchBlogs()
   }
 
+  const updateBlogLikes = async (id, blogObject) => {
+    try {
+      await blogService.update(id, blogObject)
+      const updatedBlog = {
+        ...blogObject,
+        id,
+      }
+      setBlogs(blogs.map(blog => blog.id !== id ? blog : updatedBlog))
+    } catch (error) {
+      console.error(error)
+      setMessage({ error: `${error}` })
+      setTimeout(() => setMessage(null), 3000)
+    }
+  }
+
   const deleteBlog = id => {
     blogService
       .deleteResource(id)
@@ -120,7 +135,7 @@ const App = () => {
             blogs
               .sort((a, b) => (a.likes > b.likes) ? 1 : -1)
               .map(blog =>
-                <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog}/>
+                <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} updateBlogLikes={updateBlogLikes}/>
               )
           }
         </div>

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import blogService from '../services/blogs'
+// import blogService from '../services/blogs'
 
-const Blog = ({ blog, deleteBlog }) => {
+const Blog = ({ blog, deleteBlog, updateBlogLikes }) => {
   const [visible, setVisible] = useState(false)
-  const [like, setLike] = useState(blog.likes)
+  // const [like, setLike] = useState(blog.likes)
 
   const blogStyle = {
     paddingTop: 10,
@@ -19,19 +19,20 @@ const Blog = ({ blog, deleteBlog }) => {
     setVisible(!visible)
   }
 
-  const addLike = () => {
+  const updateLike = () => {
     let id = blog.id
-    let likes = blog.likes + 1
+    // let likes = like + 1
     const newObject = {
-      user: blog.user.id,
-      likes: likes,
+      user: blog.user?.id,
+      likes: blog.likes + 1,
       author: blog.author,
       title: blog.title,
       url: blog.url
     }
-    blogService
-      .update(id, newObject)
-      .then(() => setLike(likes))
+    updateBlogLikes(id, newObject)
+    // blogService
+    //   .update(id, newObject)
+    //   .then(() => setLike(likes))
   }
 
   const removeBlog = () => {
@@ -50,8 +51,8 @@ const Blog = ({ blog, deleteBlog }) => {
       </div>
       <div style={showWhenVisible} className='hiddenContent'>
         <p className='blogUrl'>{blog.url}</p>
-        <p className='blogLikes'>{like} <button onClick={() => addLike()}>like</button></p>
-        <p className='blogUser'>{blog.user.name}</p>
+        <p className='blogLikes'>{blog.likes} <button onClick={() => updateLike()}>like</button></p>
+        <p className='blogUser'>{blog.user?.name}</p>
         {/* <p>{blog.user?.name ? blog.user.name : 'no owner'}</p> */}
         <button className='removeBlog' onClick={() => removeBlog()}>remove</button>
       </div>
