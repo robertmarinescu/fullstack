@@ -14,6 +14,17 @@ export const incrementAnecdoteVote = (id) => {
   }
 }
 
+export const createNewAnecdote = (content) => {
+  return {
+    type: 'ADD_ANECDOTE',
+    data: {
+      content,
+      id: getId(),
+      votes: 0
+    }
+  }
+}
+
 const getId = () => (100000 * Math.random()).toFixed(0)
 
 const asObject = (anecdote) => {
@@ -37,6 +48,13 @@ const reducer = (state = initialState, action) => {
         votes: anecdoteToIncrement.votes + 1
       }
       return state.map(anecdote => anecdote.id !== id ? anecdote : incrementedAnecdote)
+    case 'ADD_ANECDOTE':
+      if(action.data.content !== ''){
+        return [...state, action.data]
+      } else {
+        console.log('The content is null')
+        return state;
+      }
     default:
       return state;
   }
