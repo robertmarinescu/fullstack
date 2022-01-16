@@ -1,12 +1,14 @@
 import React from 'react'
-import { connect, useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 import { filter } from '../reducers/filterReducer'
 
 const Filter = ({ filter }) => {
-  const handleChange = (event) => {
-    // input-field value is in variable event.target.value
-  }
 
+  const handleChange = (event) => {
+    const filterValue = event.target.value
+    filter({filter: filterValue})
+    console.log(filterValue)
+  }
   const style = {
     marginBottom: 10
   }
@@ -17,4 +19,5 @@ const Filter = ({ filter }) => {
     </div>
   )
 }
-export default Filter
+const ConnectedFilter = connect(null, {filter})(Filter)
+export default ConnectedFilter

@@ -4,20 +4,22 @@ import { incrementAnecdoteVote } from '../reducers/anecdoteReducer'
 import { notificationReset } from '../reducers/notificationReducer'
 import Filter from './Filter'
 
-const AnecdoteList = ({ filter }) => {
+const AnecdoteList = () => {
   const dispatch = useDispatch()
-
+  const anecdotes = useSelector(state => state.anecdote)
+  const filter = useSelector(state => state.filter)
+  console.log(filter)
   const anecdotesToShow = () => {
-    if (filter.filter === ''){
-      
+    if (filter === ''){
+      return anecdotes
+    } else {
+      return anecdotes
+        .filter((anecdote) =>
+          anecdote.content.toLowerCase().includes(filter.filter.toLowerCase())
+        )
+        .sort((a, b) => (a.votes > b.votes ? -1 : 1));
     }
-    console.log('is empt')
 
-    return anecdotes
-      .filter((anecdote) =>
-        anecdote.content.toLowerCase().includes(filter.filter.toLowerCase())
-      )
-      .sort((a, b) => (a.votes > b.votes ? -1 : 1));
   };
 
   const vote = (id, content) => {
@@ -27,13 +29,13 @@ const AnecdoteList = ({ filter }) => {
     }, 5000)
   }
 
-  const anecdotes = useSelector(state => state.anecdote)
 
   return (
     <div>
       <h2>Anecdotes</h2>
       <Filter />
-      {anecdotes.sort((a,b) => a.votes > b.votes ? - 1 : 1).map(anecdote =>
+      
+      {anecdotesToShow().sort((a,b) => a.votes > b.votes ? - 1 : 1).map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
