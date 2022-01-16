@@ -2,9 +2,23 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { incrementAnecdoteVote } from '../reducers/anecdoteReducer'
 import { notificationReset } from '../reducers/notificationReducer'
+import Filter from './Filter'
 
-const AnecdoteList = () => {
+const AnecdoteList = ({ filter }) => {
   const dispatch = useDispatch()
+
+  const anecdotesToShow = () => {
+    if (filter.filter === ''){
+      
+    }
+    console.log('is empt')
+
+    return anecdotes
+      .filter((anecdote) =>
+        anecdote.content.toLowerCase().includes(filter.filter.toLowerCase())
+      )
+      .sort((a, b) => (a.votes > b.votes ? -1 : 1));
+  };
 
   const vote = (id, content) => {
     dispatch(incrementAnecdoteVote(id, content))
@@ -18,6 +32,7 @@ const AnecdoteList = () => {
   return (
     <div>
       <h2>Anecdotes</h2>
+      <Filter />
       {anecdotes.sort((a,b) => a.votes > b.votes ? - 1 : 1).map(anecdote =>
         <div key={anecdote.id}>
           <div>

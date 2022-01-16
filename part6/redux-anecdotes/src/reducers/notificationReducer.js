@@ -6,7 +6,7 @@ export const notificationReset = () => {
 
 const notificationReducer = (state = null, action) => {
   let message = 'you voted'
-  switch(action.type){
+  switch (action.type){
     case 'ADD_ANECDOTE':
       return action.data.content
     case 'VOTE_ANECDOTE':
