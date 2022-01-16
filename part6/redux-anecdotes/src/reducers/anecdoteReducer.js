@@ -7,10 +7,10 @@ const anecdotesAtStart = [
   'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
 ]
 
-export const incrementAnecdoteVote = (id) => {
+export const incrementAnecdoteVote = (id, content) => {
   return {
     type: 'VOTE_ANECDOTE',
-    data: { id }
+    data: { id, content }
   }
 }
 
