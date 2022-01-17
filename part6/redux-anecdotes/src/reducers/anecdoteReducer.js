@@ -7,7 +7,6 @@ const reducer = (state = [], action) => {
     case 'VOTE_ANECDOTE':
       const id = action.data.id
       const anecdoteToIncrement = state.find(a => a.id === id)
-      console.log(anecdoteToIncrement)
       const incrementedAnecdote = {
         ...anecdoteToIncrement,
         votes: anecdoteToIncrement.votes + 1
@@ -26,10 +25,18 @@ const reducer = (state = [], action) => {
   }
 }
 
-export const incrementAnecdoteVote = (id, content) => {
-  return {
-    type: 'VOTE_ANECDOTE',
-    data: { id, content }
+export const voteAnecdote = (votedAnecdote) => {
+  return async dispatch => {
+    const anecdote = {
+      ...votedAnecdote,
+      votes: votedAnecdote.votes + 1
+    }
+    const updatedAnecdote = await anecdoteService.update(anecdote)
+    const { id } = updatedAnecdote
+      dispatch({
+        type: 'VOTE_ANECDOTE',
+        data: { id }
+    })
   }
 }
 
@@ -53,6 +60,6 @@ export const initializeAnecdotes = () => {
   }
 }
 
-const getId = () => (100000 * Math.random()).toFixed(0)
+// const getId = () => (100000 * Math.random()).toFixed(0)
 
 export default reducer
