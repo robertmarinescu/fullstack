@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { incrementAnecdoteVote } from '../reducers/anecdoteReducer'
 import { notificationReset } from '../reducers/notificationReducer'
 import Filter from './Filter'
-import anecdotesService from '../services/anecdotes'
-import { initializeNotes } from '../reducers/anecdoteReducer'
 
 const AnecdoteList = () => {
   const dispatch = useDispatch()
@@ -14,6 +12,7 @@ const AnecdoteList = () => {
   console.log(filter)
   const anecdotesToShow = () => {
     if (filter === ''){
+      console.log('anecdotesToShow() call: ', anecdotes)
       return anecdotes
     } else {
       return anecdotes
@@ -22,7 +21,6 @@ const AnecdoteList = () => {
         )
         .sort((a, b) => (a.votes > b.votes ? -1 : 1));
     }
-
   };
 
   const vote = (id, content) => {
