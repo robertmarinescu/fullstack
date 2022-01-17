@@ -14,6 +14,7 @@ const reducer = (state = [], action) => {
       }
       return state.map(anecdote => anecdote.id !== id ? anecdote : incrementedAnecdote)
     case 'ADD_ANECDOTE':
+      console.log('=====>', action)
       if(action.data.content !== ''){
         return [...state, action.data]
       } else {
@@ -32,15 +33,15 @@ export const incrementAnecdoteVote = (id, content) => {
   }
 }
 
-export const createNewAnecdote = (content) => {
-  return {
-    type: 'ADD_ANECDOTE',
-    data: {
-      content,
-      votes: 0
-    }
-  }
-}
+export const createAnecdote = (data) => {
+  return async (dispatch) => {
+    const newAnecdote = await anecdoteService.createNew(data);
+    dispatch({
+      type: "ADD_ANECDOTE",
+      data: newAnecdote,
+    });
+  };
+};
 
 export const initializeAnecdotes = () => {
   return async dispatch => {
