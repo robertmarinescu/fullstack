@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import axios from 'axios';
 import CountryDetails from "./components/CountryDetails"
 import CountryItem from "./components/CountryItem"
@@ -12,8 +12,7 @@ const App = () => {
   const [newCountry, setCountry] = useState("");
   const [showCountry, setShowCountry] = useState([]);
 
-  //* Fetch country data from api
-  const hook = () => {
+  useEffect(() => {
     axios
       .get("https://restcountries.eu/rest/v2/all")
       .then(response => {
@@ -21,15 +20,16 @@ const App = () => {
         console.log(response.data)
         setCountries(response.data)
       })
-  }
+  }, [])
+  
 
-  useEffect(hook, [])
-
-  const handleCountryChange = (event) => {
+  //TODO: useCallback to wrap handleCountryChange
+  const handleCountryChange = useCallback((event) => {
     const target = event.target
     setShowCountry([])
     setCountry(target.value)
-  }
+  }, [])
+  
 
   let filterCountries = countries.filter(country => country.name.toLowerCase().includes(newCountry.toLowerCase()))
 

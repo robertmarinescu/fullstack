@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 
 const Notification = () => {
   const notification = useSelector(state => state.notification)
+  console.log('=>>>>', notification.message)
 
   const style = {
     border: 'solid',
@@ -10,12 +11,12 @@ const Notification = () => {
     borderWidth: 1
   }
 
-  if (notification === null) {
+  if (notification === '') {
     return null;
   } else {
     return (
       <div style={style}>
-        {notification}
+        {notification.message}
       </div>
     )
   }

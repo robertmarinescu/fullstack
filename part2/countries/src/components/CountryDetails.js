@@ -8,7 +8,7 @@ const CountryDetails = ({country}) => {
   
   const [weather, setWeather] = useState([]);
 
-  const weatherHook = () => {
+  useEffect(() => {
     const capital = country.capital;
     if(capital){
       axios
@@ -20,9 +20,7 @@ const CountryDetails = ({country}) => {
         })
         .catch(err => console.log(err))
     }
-  }
-
-  useEffect(weatherHook, [country])
+  }, [country])
 
   return (
     <div>

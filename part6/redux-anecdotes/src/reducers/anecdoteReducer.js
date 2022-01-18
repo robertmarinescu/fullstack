@@ -17,7 +17,6 @@ const reducer = (state = [], action) => {
       if(action.data.content !== ''){
         return [...state, action.data]
       } else {
-        console.log('The content is null')
         return state;
       }
     default:
