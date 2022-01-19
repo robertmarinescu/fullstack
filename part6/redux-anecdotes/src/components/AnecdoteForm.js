@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import {createAnecdote} from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
@@ -25,4 +25,6 @@ function AnecdoteForm() {
   )
 }
 
-export default AnecdoteForm
+const ConnectedAnecdoteForm = connect(null, {createAnecdote, setNotification})(AnecdoteForm)
+
+export default ConnectedAnecdoteForm
