@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
+
 
 const Menu = () => {
   const padding = {
@@ -6,9 +8,9 @@ const Menu = () => {
   }
   return (
     <div>
-      <a href='#' style={padding}>anecdotes</a>
-      <a href='#' style={padding}>create new</a>
-      <a href='#' style={padding}>about</a>
+      <Link to='/' style={padding}>anecdotes</Link>
+      <Link to='/create' style={padding}>create new</Link>
+      <Link to='/about' style={padding}>about</Link>
     </div>
   )
 }
@@ -36,13 +38,18 @@ const About = () => (
   </div>
 )
 
-const Footer = () => (
-  <div>
-    Anecdote app for <a href='https://courses.helsinki.fi/fi/tkt21009'>Full Stack -websovelluskehitys</a>.
+const Footer = () => {
+  const paddingTop = {
+    paddingTop: 50
+  }
+  return (
+    <div style={paddingTop}>
+      Anecdote app for <a href='https://courses.helsinki.fi/fi/tkt21009'>Full Stack -websovelluskehitys</a>.
 
-    See <a href='https://github.com/fullstack-hy/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2019/routed-anecdotes/blob/master/src/App.js</a> for the source code.
-  </div>
-)
+      See <a href='https://github.com/fullstack-hy/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2019/routed-anecdotes/blob/master/src/App.js</a> for the source code.
+    </div>
+  )
+}
 
 const CreateNew = (props) => {
   const [content, setContent] = useState('')
@@ -125,10 +132,20 @@ const App = () => {
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Menu />
-      <AnecdoteList anecdotes={anecdotes} />
-      <About />
-      <CreateNew addNew={addNew} />
+      <Router>
+        <Menu />
+        <Switch>
+          <Route path='/'>
+            <AnecdoteList anecdotes={anecdotes} />
+          </Route>
+          <Route path='/about'>
+            <About />
+          </Route>
+          <Route path='/create'>
+            <CreateNew addNew={addNew} />
+          </Route>
+        </Switch>
+      </Router>
       <Footer />
     </div>
   )
