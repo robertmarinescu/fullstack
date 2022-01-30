@@ -150,6 +150,7 @@ const App = () => {
     anecdotes.find(a => a.id === id)
 
   const vote = (id) => {
+    //TODO: implement vote anecdote
     const anecdote = anecdoteById(id)
 
     const voted = {
