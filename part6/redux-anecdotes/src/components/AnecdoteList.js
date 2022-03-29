@@ -10,17 +10,6 @@ const AnecdoteList = () => {
 
   const filter = useSelector(state => state.filter)
   console.log(filter)
-  const anecdotesToShow = () => {
-    if (filter === ''){
-      return anecdotes
-    } else {
-      return anecdotes
-        .filter((anecdote) =>
-          anecdote.content.toLowerCase().includes(filter.filter.toLowerCase())
-        )
-        .sort((a, b) => (a.votes > b.votes ? -1 : 1));
-    }
-  };
 
   const vote = (anecdote) => {
     dispatch(voteAnecdote(anecdote))
@@ -33,7 +22,7 @@ const AnecdoteList = () => {
       <h2>Anecdotes</h2>
       <Filter />
       
-      {anecdotesToShow().sort((a,b) => a.votes > b.votes ? - 1 : 1).map(anecdote =>
+      {anecdotes.sort((a,b) => a.votes > b.votes ? - 1 : 1).map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
