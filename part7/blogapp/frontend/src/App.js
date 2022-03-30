@@ -12,9 +12,10 @@ import userService from './services/user'
 
 import {useSelector, useDispatch} from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import { setBlogs, initializeBlogs, createBlog, appendBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  // const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   // const [notification, setNotification] = useState(null)
   const blogFormRef = useRef()
@@ -23,11 +24,20 @@ const App = () => {
   const dispatch = useDispatch()
   const notification = useSelector(store => store.notificationReducer.notification)
 
+  // useEffect(() => {
+  //   blogService.getAll().then(blogs =>
+  //     setBlogs( blogs.sort(byLikes) )
+  //   )
+  // }, [])
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs.sort(byLikes) )
-    )
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
+  let blogs = useSelector(({blogReducer}) => {
+    console.log('blogReducer =>', blogReducer)
+    return blogReducer
+  })
 
   useEffect(() => {
     const userFromStorage = userService.getUser()
@@ -56,8 +66,9 @@ const App = () => {
 
   const createBlog = async (blog) => {
     blogService.create(blog).then(createdBlog => {
+      dispatch(appendBlog(blog))
       notify(`a new blog '${createdBlog.title}' by ${createdBlog.author} added`)
-      setBlogs(blogs.concat(createdBlog))
+      // setBlogs(blogs.concat(createdBlog))
       blogFormRef.current.toggleVisibility()
     }).catch(error => {
       notify('creating a blog failed: ' + error.response.data.error, 'alert')
