@@ -12,6 +12,15 @@ const blogSlice = createSlice({
     },
     appendBlog(state, action) {
       state.push(action.payload)
+    },
+    likeBlog(state, action) {
+      const id = action.payload
+      const blog = state.find(blog => blog.id === id)
+      const likedBlog = {
+        ...blog,
+        likes: blog.likes + 1
+      }
+      return state.map(blog => blog.id !== id ? blog : likedBlog)
     }
   }
 })

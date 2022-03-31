@@ -88,7 +88,7 @@ const App = () => {
       const updatedBlogs = blogs
         .filter(b => b.id!==id)
         .sort(byLikes)
-      setBlogs(updatedBlogs)
+      dispatch(setBlogs(updatedBlogs))
     })
   }
 
@@ -105,13 +105,12 @@ const App = () => {
       const updatedBlogs = blogs
         .map(b => b.id===id ? updatedBlog : b)
         .sort(byLikes)
-      setBlogs(updatedBlogs)
+      dispatch(setBlogs(updatedBlogs))
     })
   }
 
   const notify = (message, type='info') => {
     dispatch(setNotification({message, type}))
-    // setNotification({ message, type })
     setTimeout(() => {
       dispatch(setNotification(null))
     }, 5000)
@@ -124,6 +123,7 @@ const App = () => {
     </>
   }
 
+  console.log('user=>', user)
   return (
     <div>
       <h2>blogs</h2>
